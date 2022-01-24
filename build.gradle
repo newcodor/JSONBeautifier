@@ -1,12 +1,13 @@
 apply plugin: 'java'
+apply plugin: 'java-library'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'net.portswigger.burp.extender:burp-extender-api:1.7.13'
-    compile 'com.google.code.gson:gson:2.8.0'
+    api 'net.portswigger.burp.extender:burp-extender-api:1.7.22'
+    api 'com.google.code.gson:gson:2.8.0'
 }
 
 sourceSets {
@@ -17,8 +18,12 @@ sourceSets {
     }
 }
 
+configurations.implementation.setCanBeResolved(true)
+configurations.api.setCanBeResolved(true)
+
 task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.api.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
